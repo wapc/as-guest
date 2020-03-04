@@ -1,6 +1,6 @@
 # waPC Guest Library for AssemblyScript
 
-This is the [AssemblyScript](https://assemblyscript.org/) implementation of the **waPC** standard for WebAssembly guest modules. It allows any waPC-compliant WebAssembly host to invoke to procedures inside a TinyGo compiled guest and similarly for the guest to invoke procedures exposed by the host.
+This is the [AssemblyScript](https://assemblyscript.org/) implementation of the **waPC** standard for WebAssembly guest modules. It allows any waPC-compliant WebAssembly host to invoke to procedures inside a AssemblyScript compiled guest and similarly for the guest to invoke procedures exposed by the host.
 
 ## Example
 The following is a simple example of synchronous, bi-directional procedure calls between a WebAssembly host runtime and the guest module.
