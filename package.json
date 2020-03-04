@@ -1,0 +1,14 @@
+{
+  "name": "wapc-guest-as",
+  "version": "0.1.0",
+  "description": "waPC Guest Library for AssemblyScript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wapc/wapc-guest-as.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "assemblyscript": "^0.9.2"
+  }
+}

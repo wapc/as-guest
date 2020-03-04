@@ -21,8 +21,13 @@ register("hello", function(payload: ArrayBuffer): ArrayBuffer {
 export function __guest_call(operation_size: usize, payload_size: usize): bool {
   return handleCall(operation_size, payload_size);
 }
+
+// Abort function
+function abort(message: string | null, fileName: string | null, lineNumber: u32, columnNumber: u32): void {
+  handleAbort(message, fileName, lineNumber, columnNumber)
+}
 ```
 
 ```sh
-asc example/hello.ts -b example/hello.wasm --use abort=wapc/abort --validate --optimize
+asc example/hello.ts -b example/hello.wasm --use abort=example/hello/abort --validate --optimize
 ```

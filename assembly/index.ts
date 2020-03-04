@@ -91,7 +91,7 @@ export function consoleLog(message: string): void {
   __console_log(changetype<i32>(messageBuf), messageBuf.byteLength)
 }
 
-export function abort(
+export function handleAbort(
   message: string | null,
   fileName: string | null,
   lineNumber: u32,
