@@ -10,7 +10,7 @@ import {
   register,
   handleCall,
   hostCall,
-} from "../wapc";
+} from "wapc";
 
 register("hello", function(payload: ArrayBuffer): ArrayBuffer {
   hostCall("sample", "hello", String.UTF8.encode("Simon"))
