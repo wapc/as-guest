@@ -10,6 +10,7 @@ import {
   register,
   handleCall,
   hostCall,
+  handleAbort,
 } from "wapc";
 
 register("hello", function(payload: ArrayBuffer): ArrayBuffer {
