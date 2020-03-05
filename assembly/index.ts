@@ -42,8 +42,8 @@ function errorFunction(payload: ArrayBuffer): ArrayBuffer {
 }
 
 export function handleCall(operation_size: usize, payload_size: usize): bool {
-  const operationBuf = new ArrayBuffer(operation_size)
-  const payload = new ArrayBuffer(payload_size)
+  const operationBuf = new ArrayBuffer(changetype<i32>(operation_size))
+  const payload = new ArrayBuffer(changetype<i32>(payload_size))
   __guest_request(changetype<i32>(operationBuf), changetype<i32>(payload));
 
   const operation = String.UTF8.decode(operationBuf)
@@ -70,7 +70,7 @@ export function hostCall(namespace: string, operation: string, payload: ArrayBuf
   if (!result) {
       const errorLen = __host_error_len();
       const errorPrefix = "Host error: ";
-      const message = new ArrayBuffer(errorLen)
+      const message = new ArrayBuffer(changetype<i32>(errorLen))
       __host_error(changetype<i32>(message))
       const errorMsg = "Host error: " + String.UTF8.decode(message)
       consoleLog(errorMsg)
@@ -80,7 +80,7 @@ export function hostCall(namespace: string, operation: string, payload: ArrayBuf
   }
 
   const responseLen = __host_response_len()
-  const response = new ArrayBuffer(responseLen)
+  const response = new ArrayBuffer(changetype<i32>(responseLen))
   __host_response(changetype<i32>(response))
 
   return response
