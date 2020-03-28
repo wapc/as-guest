@@ -47,7 +47,6 @@ export function handleCall(operation_size: usize, payload_size: usize): bool {
   __guest_request(changetype<i32>(operationBuf), changetype<i32>(payload));
 
   const operation = String.UTF8.decode(operationBuf)
-  consoleLog(operation)
   const fn = getFunction(operation)
   if (fn != errorFunction) {
     const response = fn(payload)
