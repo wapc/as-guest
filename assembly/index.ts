@@ -7,7 +7,8 @@ export declare function __guest_error(ptr: i32, len: usize): void
 
 @external("wapc", "__host_call")
 export declare function __host_call(
-  module_ptr: i32, module_len: usize,
+  binding_ptr: i32, binding_len: usize,
+  namespace_ptr: i32, namespace_len: usize,
   operation_ptr: i32, operation_len: usize,
   payload_ptr: i32, payload_len: usize): bool
 @external("wapc", "__host_response_len")
@@ -59,16 +60,17 @@ export function handleCall(operation_size: usize, payload_size: usize): bool {
   return false;
 }
 
-export function hostCall(namespace: string, operation: string, payload: ArrayBuffer): ArrayBuffer {
+export function hostCall(binding: string, namespace: string, operation: string, payload: ArrayBuffer): ArrayBuffer {
+  const bindingBuf = String.UTF8.encode(binding)
   const namespaceBuf = String.UTF8.encode(namespace)
   const operationBuf = String.UTF8.encode(operation)
   const result = __host_call(
+    changetype<i32>(bindingBuf), bindingBuf.byteLength,
     changetype<i32>(namespaceBuf), namespaceBuf.byteLength,
     changetype<i32>(operationBuf), operationBuf.byteLength,
     changetype<i32>(payload), payload.byteLength)
   if (!result) {
       const errorLen = __host_error_len();
-      const errorPrefix = "Host error: ";
       const message = new ArrayBuffer(changetype<i32>(errorLen))
       __host_error(changetype<i32>(message))
       const errorMsg = "Host error: " + String.UTF8.decode(message)

@@ -14,7 +14,7 @@ import {
 } from "wapc";
 
 register("hello", function(payload: ArrayBuffer): ArrayBuffer {
-  hostCall("sample", "hello", String.UTF8.encode("Simon"))
+  hostCall("myBinding", "sample", "hello", String.UTF8.encode("Simon"))
   return String.UTF8.encode("Hello")
 })
 
