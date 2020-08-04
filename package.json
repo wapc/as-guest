@@ -1,6 +1,7 @@
 {
   "name": "wapc-guest-as",
-  "version": "0.1.0",
+  "version": "0.2.1",
+  "types": "assembly/index.ts",
   "description": "waPC Guest Library for AssemblyScript",
   "repository": {
     "type": "git",
