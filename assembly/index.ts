@@ -23,7 +23,27 @@ export declare function __host_error(ptr: i32): void
 @external("wapc", "__console_log")
 export declare function __console_log(ptr: i32, len: usize): void
 
-export type Function = (payload: ArrayBuffer) => ArrayBuffer
+const emptyBuffer = new ArrayBuffer(0);
+
+export class Result {
+  readonly buffer: ArrayBuffer
+  readonly error: Error | null
+
+  constructor(buffer: ArrayBuffer, error: Error | null) {
+    this.buffer = buffer
+    this.error = error
+  }
+
+  static ok(buffer: ArrayBuffer): Result {
+    return new Result(buffer, null);
+  }
+
+  static error(err: Error): Result {
+    return new Result(emptyBuffer, err);
+  }
+}
+
+export type Function = (payload: ArrayBuffer) => Result
 
 var functions = new Map<string, Function>()
 
@@ -38,8 +58,8 @@ function getFunction(name: string): Function {
   return functions.get(name)
 }
 
-function errorFunction(payload: ArrayBuffer): ArrayBuffer {
-  return new ArrayBuffer(1)
+function errorFunction(payload: ArrayBuffer): Result {
+  return Result.error(new Error("error"));
 }
 
 export function handleCall(operation_size: usize, payload_size: usize): bool {
@@ -50,7 +70,16 @@ export function handleCall(operation_size: usize, payload_size: usize): bool {
   const operation = String.UTF8.decode(operationBuf)
   const fn = getFunction(operation)
   if (fn != errorFunction) {
-    const response = fn(payload)
+    const result = fn(payload);
+
+    if (result.error) {
+      const errorMsg = result.error!.message;
+      const message = String.UTF8.encode(errorMsg);
+      __guest_error(changetype<i32>(message), message.byteLength);
+      return false;
+    }
+
+    const response = result.buffer;
     __guest_response(changetype<i32>(response), response.byteLength)
     return true
   }
@@ -60,7 +89,7 @@ export function handleCall(operation_size: usize, payload_size: usize): bool {
   return false;
 }
 
-export function hostCall(binding: string, namespace: string, operation: string, payload: ArrayBuffer): ArrayBuffer {
+export function hostCall(binding: string, namespace: string, operation: string, payload: ArrayBuffer): Result {
   const bindingBuf = String.UTF8.encode(binding)
   const namespaceBuf = String.UTF8.encode(namespace)
   const operationBuf = String.UTF8.encode(operation)
@@ -70,21 +99,18 @@ export function hostCall(binding: string, namespace: string, operation: string, 
     changetype<i32>(operationBuf), operationBuf.byteLength,
     changetype<i32>(payload), payload.byteLength)
   if (!result) {
-      const errorLen = __host_error_len();
-      const message = new ArrayBuffer(changetype<i32>(errorLen))
-      __host_error(changetype<i32>(message))
-      const errorMsg = "Host error: " + String.UTF8.decode(message)
-      consoleLog(errorMsg)
-      throw new Error(errorMsg)
-      //__guest_error(message.ptr, message.len);
-      //return error.HostError;
+    const errorLen = __host_error_len();
+    const message = new ArrayBuffer(changetype<i32>(errorLen))
+    __host_error(changetype<i32>(message))
+    const errorMsg = String.UTF8.decode(message)
+    return Result.error(new Error(errorMsg));
   }
 
   const responseLen = __host_response_len()
   const response = new ArrayBuffer(changetype<i32>(responseLen))
   __host_response(changetype<i32>(response))
 
-  return response
+  return Result.ok(response);
 }
 
 export function consoleLog(message: string): void {
@@ -97,12 +123,12 @@ export function handleAbort(
   fileName: string | null,
   lineNumber: u32,
   columnNumber: u32
-): void{
-  var errorMessage = (message!=null) ?message! :"error occurred"
+): void {
+  var errorMessage = (message != null) ? message! : "error occurred"
   if (fileName != null && lineNumber != 0 && columnNumber != 0) {
     errorMessage += "; " + fileName! + " (" + lineNumber.toString() + "," + columnNumber.toString() + ")"
   }
   const messageBuf = String.UTF8.encode(errorMessage)
-  
+
   __guest_error(changetype<i32>(messageBuf), messageBuf.byteLength)
 }
