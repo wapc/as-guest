@@ -43,6 +43,12 @@ export class Result {
   }
 }
 
+export class HostError extends Error {
+  constructor(message: string) {
+    super(message)
+  }
+}
+
 export type Function = (payload: ArrayBuffer) => Result
 
 var functions = new Map<string, Function>()
@@ -103,7 +109,7 @@ export function hostCall(binding: string, namespace: string, operation: string, 
     const message = new ArrayBuffer(changetype<i32>(errorLen))
     __host_error(changetype<i32>(message))
     const errorMsg = String.UTF8.decode(message)
-    return Result.error(new Error(errorMsg));
+    return Result.error(new HostError(errorMsg));
   }
 
   const responseLen = __host_response_len()
