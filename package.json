@@ -1,6 +1,6 @@
 {
   "name": "@wapc/as-guest",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "types": "assembly/index.ts",
   "description": "waPC Guest Library for AssemblyScript",
   "main": "assembly/index.ts",
@@ -15,6 +15,6 @@
   },
   "homepage": "https://github.com/wapc/as-guest#readme",
   "devDependencies": {
-    "assemblyscript": "^0.20.6"
+    "assemblyscript": "^0.20.13"
   }
 }
