@@ -63,7 +63,7 @@ export function handleCall(operation_size: usize, payload_size: usize): bool {
       return true
     }
 
-    const message = String.UTF8.encode(response.error()!.message)
+    const message = String.UTF8.encode(response.error()!.message);
     __guest_error(changetype<i32>(message), message.byteLength)
     return false;
   }
@@ -109,9 +109,9 @@ export function handleAbort(
   lineNumber: u32,
   columnNumber: u32
 ): void{
-  var errorMessage = (message!=null) ?message! :"error occurred"
+  var errorMessage = (message != null) ? message :"error occurred"
   if (fileName != null && lineNumber != 0 && columnNumber != 0) {
-    errorMessage += "; " + fileName! + " (" + lineNumber.toString() + "," + columnNumber.toString() + ")"
+    errorMessage += "; " + fileName + " (" + lineNumber.toString() + "," + columnNumber.toString() + ")"
   }
   const messageBuf = String.UTF8.encode(errorMessage)
   
